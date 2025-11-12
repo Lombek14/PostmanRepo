@@ -1,0 +1,90 @@
+name: Newman CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # run manually from Actions tab
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: GoREST
+            collection: collections/GoREST_API.json
+            env: environment/GoREST_Env.json
+            out: gorest.html
+            title: "GoREST API - HTMLEXTRA Report"
+          - name: Booking
+            collection: collections/Booking_API.json
+            env: environment/Booking_Env.json
+            out: booking.html
+            title: "Booking API - HTMLEXTRA Report"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Newman + reporter
+        run: |
+          npm install --no-audit --no-fund --legacy-peer-deps newman@6 newman-reporter-htmlextra@latest
+
+      - name: Run ${{ matrix.name }} collection
+        run: |
+          mkdir -p newman
+          npx newman run "${{ matrix.collection }}" \
+            -e "${{ matrix.env }}" \
+            -r cli,htmlextra \
+            --reporter-htmlextra-export "newman/${{ matrix.out }}" \
+            --reporter-htmlextra-title "${{ matrix.title }}"
+
+      - name: Upload report (${{ matrix.name }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-${{ matrix.name }}
+          path: newman/${{ matrix.out }}
+          if-no-files-found: error
+
+  index:
+    runs-on: ubuntu-latest
+    needs: newman
+    steps:
+      - name: Create index page
+        run: |
+          mkdir newman
+          cat > newman/index.html <<'HTML'
+          <!doctype html><meta charset="utf-8"><title>Newman Reports</title>
+          <h1>Newman Reports</h1>
+          <ul>
+            <li><a href="gorest.html">GoREST Report</a></li>
+            <li><a href="booking.html">Booking Report</a></li>
+          </ul>
+          HTML
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: newman
+      # The two artifacts unpack into subfolders; flatten them:
+      - name: Flatten
+        run: |
+          shopt -s globstar nullglob
+          mv newman/**/gorest.html newman/ 2>/dev/null || true
+          mv newman/**/booking.html newman/ 2>/dev/null || true
+
+      - name: Upload combined package
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-all
+          path: newman/**
