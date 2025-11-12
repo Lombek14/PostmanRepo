@@ -1,0 +1,33 @@
+{
+  "id": "13188fbf-9a87-453a-a626-a02b178568f7",
+  "name": "GOREST API",
+  "values": [
+    {
+      "key": "BaseURL",
+      "value": "https://gorest.co.in/public/v2",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "token",
+      "value": "b5f48000bb94bc295ec6b8a55fee5097",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "uniqueEmail",
+      "value": "postman.1762503749341@learn.com",
+      "type": "default",
+      "enabled": true
+    },
+    {
+      "key": "fullName",
+      "value": "Tiger Mc Obameyang",
+      "type": "default",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2025-11-07T08:16:33.518Z",
+  "_postman_exported_using": "Postman/11.70.5"
+}

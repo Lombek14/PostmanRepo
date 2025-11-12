@@ -1,0 +1,741 @@
+{
+	"info": {
+		"_postman_id": "bcf3a88d-d1f9-4868-ab3c-b5429068e5e3",
+		"name": "GoREST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49744612",
+		"_collection_link": "https://mahoula81-8662913.postman.co/workspace/mahoula-dosso's-Workspace~b012b0f0-9744-46b3-8435-c305d212af93/collection/49744612-bcf3a88d-d1f9-4868-ab3c-b5429068e5e3?action=share&source=collection_link&creator=49744612"
+	},
+	"item": [
+		{
+			"name": "Positive Scenarios",
+			"item": [
+				{
+					"name": "get-users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"200 OK\", () => pm.response.to.have.status(200));\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/users",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create-users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"201 Created\", () => pm.response.to.have.status(201));",
+									"const j = pm.response.json();",
+									"",
+									"pm.environment.set(\"userId\", j.id);",
+									"",
+									"pm.test(\"has email\", () =>{",
+									"    pm.expect(j).to.have.property(\"email\");",
+									"});",
+									"",
+									"pm.test(\"has gender\", () => {",
+									"    pm.expect(j.gender).to.be.oneOf ([\"male\", \"female\"]);",
+									"});",
+									"",
+									"pm.test(\"has status\", () => {",
+									"    pm.expect(j.status).to.be.oneOf([\"active\", \"inactive\"]);",
+									"});",
+									"",
+									"const schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"id\": {",
+									"      \"type\": \"integer\"",
+									"    },",
+									"    \"name\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"email\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"gender\": {",
+									"      \"type\": \"string\"",
+									"    },",
+									"    \"status\": {",
+									"      \"type\": \"string\"",
+									"    }",
+									"  },",
+									"      \"required\": [\"id\", \"name\", \"email\", \"gender\", \"status\"]",
+									"};",
+									"",
+									"pm.test(\"has correct schema\", () => {",
+									"    pm.expect(j).to.have.jsonSchema(schema);",
+									"});",
+									"",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set('uniqueEmail', `postman.${Date.now()}@learn.com`);\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{fullName}}\",\r\n    \"email\": \"{{uniqueEmail}}\",\r\n    \"gender\": \"female\",\r\n    \"status\": \"inactive\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user-details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"status code 200\"), ()=> pm.response.to.have.status(200);\r",
+									"const j = pm.response.json();\r",
+									"\r",
+									"pm.test(\"has gender\", () => {\r",
+									"    pm.expect(j.gender).to.be.oneOf ([\"male\", \"female\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"has status\", () => {\r",
+									"    pm.expect(j.status).to.be.oneOf([\"active\", \"inactive\"]);\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-users-details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"code status 200\"), () => pm.response.to.have.status(200);\r",
+									"pm.test(\"already taken\"), () => pm.response.to.have.status(422);\r",
+									"\r",
+									"const j = pm.response.json();\r",
+									"\r",
+									"pm.test(\"has gender\", () => {\r",
+									"    pm.expect(j.gender).to.be.oneOf ([\"male\", \"female\"]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"has status\", () => {\r",
+									"    pm.expect(j.status).to.be.oneOf([\"active\", \"inactive\"]);\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \r\n    \"name\": \"King, Steven Junior\",\r\n    \"email\": \"Postman@learn9.com\",\r\n    \"gender\": \"female\",\r\n    \"status\": \"active\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update-Partial details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"has code 200\", () => pm.response.to.have.status(200));",
+									"",
+									"const j = pm.response.json();",
+									"",
+									"pm.test(\"has correct content type\", () => {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "coo",
+								"value": "token=",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"status\": \"inactive\",\r\n    \"gender\": \"male\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"DELETE returns 204 (or 404 if already gone)\", () => {\r",
+									"    const status = pm.response.code;\r",
+									"\r",
+									"    pm.expect([204, 404]).to.include(status);\r",
+									"\r",
+									"    if (status === 204) {\r",
+									"        console.log(\"Resource deleted successfully.\");\r",
+									"        pm.environment.unset(\"userId\"); // Clear the variable if deletion succeeded\r",
+									"    }\r",
+									"\r",
+									"    if (status === 404) {\r",
+									"        console.warn(\"Resource was already deleted or never existed.\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative Scenarios",
+			"item": [
+				{
+					"name": "get invalid user-Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify response status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseURL}}/users/73",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"73"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify authentication failed message\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{fullName}}\",\r\n    \"email\": \"{{uniqueEmail}}\",\r\n    \"gender\": \"Male\",\r\n    \"status\": \"active\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update users with invalid chars or empty fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"code status 200\"), () => pm.response.to.have.status(404);\r",
+									"pm.test(\"email already taken\"), () => pm.response.to.have.status(422);\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"MC. Mah Tiger\",\r\n    \"email\": \"Postman@learn5.com\",\r\n    \"gender\": \"male\",\r\n    \"status\": \"inactive\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Partial update-wrong gender",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate gender\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"gender\": \"Animal\"\r\n \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "already deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"DELETE returns 204 (or 404 if already gone)\", () => {\r",
+									"    const status = pm.response.code;\r",
+									"\r",
+									"    pm.expect([204, 404]).to.include(status);\r",
+									"\r",
+									"    if (status === 204) {\r",
+									"        console.log(\"Resource deleted successfully.\");\r",
+									"        pm.environment.unset(\"userId\"); // Clear the variable if deletion succeeded\r",
+									"    }\r",
+									"\r",
+									"    if (status === 404) {\r",
+									"        console.warn(\"Resource was already deleted or never existed.\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"console.log(\"BaseURL:\", pm.environment.get(\"BaseURL\"));\r",
+									"console.log(\"token:\", pm.environment.get(\"token\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "b5f4800bb94bc295ec6b8a55fee5097d30b025d3437db1fb4538262a224e57f3",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{BaseURL}}/users/{{userId}}",
+							"host": [
+								"{{BaseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
