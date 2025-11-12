@@ -1,0 +1,408 @@
+{
+	"info": {
+		"_postman_id": "8f6b9640-ea17-49ff-b405-02e9d04783b4",
+		"name": "simplecrudAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49744612",
+		"_collection_link": "https://mahoula81-8662913.postman.co/workspace/mahoula-dosso's-Workspace~b012b0f0-9744-46b3-8435-c305d212af93/collection/49744612-8f6b9640-ea17-49ff-b405-02e9d04783b4?action=share&source=collection_link&creator=49744612"
+	},
+	"item": [
+		{
+			"name": "Positive scenarios",
+			"item": [
+				{
+					"name": "Get users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+									"",
+									"const { data } = pm.response.json();        // body.data.id",
+									"pm.environment.set(\"userId\", String(data.id));",
+									"",
+									"const j = pm.response.json();",
+									"pm.test(\"Email is unique\", function () {",
+									"    pm.expect(j.data.email).to.eql(pm.environment.get(\"uniqueEmail\"));",
+									"});",
+									"",
+									"pm.test(\"Body is valid JSON\", () => {",
+									"    pm.response.to.have.jsonBody();",
+									"});",
+									"",
+									"pm.test(\"Has data\", () => {",
+									"    pm.expect(j).to.have.property(\"data\");",
+									"});",
+									"",
+									"pm.test(\"Has name\", function () {",
+									"    pm.expect(j.data).to.have.property(\"name\");",
+									"});",
+									"",
+									"pm.test(\"Has email\", function () {",
+									"    pm.expect(j.data).to.have.property(\"email\");",
+									"});",
+									"",
+									"pm.test(\"Content-Type is present\", () => {",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json\");",
+									"});",
+									"",
+									"pm.test(\"validate schema\", () => {",
+									"    pm.response.to.have.jsonSchema({",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"data\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"id\": {",
+									"                        \"type\": \"integer\"",
+									"                    },",
+									"                    \"name\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"email\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"email_verified_at\": {",
+									"                        \"type\": \"null\"",
+									"                    },",
+									"                    \"created_at\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"updated_at\": {",
+									"                        \"type\": \"string\"",
+									"                    }",
+									"                },",
+									"                \"required\": [",
+									"                    \"id\",",
+									"                    \"name\",",
+									"                    \"email\",",
+									"                    \"email_verified_at\",",
+									"                    \"created_at\",",
+									"                    \"updated_at\"",
+									"                ]",
+									"            }",
+									"        },",
+									"        \"required\": [",
+									"            \"data\"",
+									"        ]",
+									"    });",
+									"});",
+									"",
+									"console.log()"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"baseURL\", \"https://simplecrudapi.com/api\");\r",
+									"\r",
+									"// If you need a fresh email each run:\r",
+									"const uniqueEmail = `user_${Date.now()}@example.com`;\r",
+									"pm.environment.set(\"uniqueEmail\", uniqueEmail);\r",
+									"console.log(\"email is set as unique email \" + uniqueEmail);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Junior Mariam Toure\",\r\n    \"email\": \"{{uniqueEmail}}\",\r\n    \"email_verified_at\": null,\r\n    \"created_at\": \"2024-11-23T16:35:30.000000Z\",\r\n    \"updated_at\": \"2025-06-18T02:15:00.000000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"Saved userId:\", pm.environment.get(\"userId\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status 200 OK\", () => pm.response.to.have.status(200));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"uniqueEmail\", `user_${Date.now()}@example.com`);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Tiger Recent Steve\",\r\n    \"email\": \"{{uniqueEmail}}\",\r\n    \"email_verified_at\": null,\r\n    \"created_at\": \"2024-11-23T16:35:30.000000Z\",\r\n    \"updated_at\": \"2025-06-18T02:15:00.000000Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Patial update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"uniqueEmail\", `user_${Date.now()}@example.com`);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Orlane Texas Lawson\",\r\n    \"email\": \"{{uniqueEmail}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"DELETE returns 200, 204 (or 404 if already gone)\", () => {\r",
+									"    const status = pm.response.code;\r",
+									"\r",
+									"    pm.expect([200, 204, 404]).to.include(status);\r",
+									"\r",
+									"    if (status === 204) {\r",
+									"        console.log(\"Resource deleted successfully.\");\r",
+									"        pm.environment.unset(\"userId\"); // Clear the variable if deletion succeeded\r",
+									"    }\r",
+									"\r",
+									"    if (status === 404) {\r",
+									"        console.warn(\"Resource was already deleted or never existed.\");\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"console.log(\"baseURL:\", pm.environment.get(\"baseURL\"));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
