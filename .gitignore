@@ -1,0 +1,12 @@
+# Node / Newman
+node_modules/
+newman-report/
+
+# OS/Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Postman extras / local envs
+*.postman_globals.json
+*local*.postman_environment.json
